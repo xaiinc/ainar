@@ -1,9 +1,5 @@
 name: flake8
 
-# on:
-#   pull_request:
-#     paths:
-#     - "**.py"
 on: [pull_request]
 
 jobs:
