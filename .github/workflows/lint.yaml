@@ -27,23 +27,19 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.local/share/virtualenvs
-        key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile') }}
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-pipenv-
 
     - name: Install dependencies
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: |
-        pipenv install --dev
+        pipenv sync --dev
 
     - name: Run flake8
       run: |
         pipenv run flake8 ainar/ --show-source
 
-    - name: Diff black
+    - name: Run
       run: |
-        pipenv run black --diff ainar/
-
-    - name: Check black
-      run: |
-        pipenv run black --check ainar/
+        pipenv run black --check --diff --config=pyproject.toml ainar/
