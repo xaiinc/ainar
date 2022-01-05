@@ -24,10 +24,7 @@ def main(**args):
     # TODO: Add force analize option
     # Analize dataset if cache does not exists
     if not has_cache:
-        records = [
-            analize(annotation, image)
-            for annotation, image in load_dataset(args["data_dir"])
-        ]
+        records = [analize(annotation, image) for annotation, image in load_dataset(args["data_dir"])]
         save_records(db, records)
 
     # Aggregation

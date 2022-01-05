@@ -1,9 +1,9 @@
-name: flake8
+name: lint
 
 on: [pull_request]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -38,4 +38,8 @@ jobs:
 
     - name: Run flake8
       run: |
-        pipenv run flake8 ainar/ --show-source
+        pipenv run flake8 ainar/ --show-source --max-line-length=120
+
+    - name: Run
+      run: |
+        pipenv run black --check --diff --config=pyproject.toml ainar/
