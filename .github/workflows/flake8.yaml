@@ -39,3 +39,11 @@ jobs:
     - name: Run flake8
       run: |
         pipenv run flake8 ainar/ --show-source
+
+    - name: Diff black
+      run: |
+        pipenv run black --diff ainar/
+
+    - name: Check black
+      run: |
+        pipenv run black --check ainar/
