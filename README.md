@@ -11,3 +11,9 @@ pipenv install
 pipenv shell
 python -m ainar [dataset_dir]
 ```
+
+Download COCO dataset
+--------------------------------------------------------------------------------
+```shell
+./download_coco.sh
+```
