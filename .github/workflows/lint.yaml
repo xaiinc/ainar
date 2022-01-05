@@ -38,7 +38,7 @@ jobs:
 
     - name: Run flake8
       run: |
-        pipenv run flake8 ainar/ --show-source
+        pipenv run flake8 ainar/ --show-source --max-line-length=120
 
     - name: Run
       run: |
