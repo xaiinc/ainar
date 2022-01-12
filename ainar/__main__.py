@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from playhouse.sqlite_ext import SqliteExtDatabase
 import json
@@ -7,7 +7,8 @@ import click
 
 from ainar.database import proxy
 from ainar.database.coco import Annotation, Category, Image
-from ainar.datasets.coco import load_dataset
+from ainar.datasets.coco import Coco, load_dataset
+from ainar.filters import filter_annotations, parse_filter_string
 
 
 @click.command()
@@ -29,18 +30,13 @@ def main(**args):
     # TODO: Add force analize option
     # Analize dataset if cache does not exists
     if not has_cache:
-        # Create tables
-        db.create_tables([Annotation, Category, Image], safe=True)
-        # Load dataset
-        dataset = load_dataset(args["data_dir"])
-        # Save data
-        with db.atomic():
-            Category.insert_many(dataset.categories).execute()
-            Image.insert_many(dataset.images).execute()
-            Annotation.insert_many(dataset.annotations).execute()
+        store_dataset(db, load_dataset(args["data_dir"]))
+
+    # Filtering
+    annotations = filter_annotations(Annotation.select(), args["filter"])
 
     # Aggregation
-    data = aggregate(db, filter)
+    data = aggregate(annotations, args["filter"])
 
     # Display results
     display_data(data, args["output"])
@@ -63,7 +59,7 @@ def validate_args(
     return {
         "data_dir": data_dir,
         "cache": cache if cache else create_cache_path_from_data_dir(data_dir),
-        "filter": json.loads(filter) if filter else {},
+        "filter": parse_filter_string(filter) if filter else {},
         "output": json.loads(output) if output else {},
         "export": export,
     }
@@ -73,12 +69,17 @@ def create_cache_path_from_data_dir(path: Path):
     return Path("./hogehoge.sqlite3")
 
 
-def save_records(db: SqliteExtDatabase, records: List[Dict]):
-    # TODO: Save records to SQLite
-    return True
+def store_dataset(db: SqliteExtDatabase, dataset: Coco):
+    # Create tables
+    db.create_tables([Annotation, Category, Image], safe=True)
+    # Save data
+    with db.atomic():
+        Category.insert_many(dataset.categories).execute()
+        Image.insert_many(dataset.images).execute()
+        Annotation.insert_many(dataset.annotations).execute()
 
 
-def aggregate(db: SqliteExtDatabase, filter: Dict):
+def aggregate(annotations: Iterable[Annotation], filter: Dict):
     # TODO: Fetch data
     return []
 
