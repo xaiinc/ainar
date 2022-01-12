@@ -1,9 +1,13 @@
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from peewee import SqliteDatabase
+from playhouse.sqlite_ext import SqliteExtDatabase
 import json
 import click
+
+from ainar.database import proxy
+from ainar.database.coco import Annotation, Category, Image
+from ainar.datasets.coco import load_dataset
 
 
 @click.command()
@@ -19,13 +23,21 @@ def main(**args):
     has_cache = args["cache"].exists()
 
     # Create sqlite client
-    db = SqliteDatabase(args["cache"], pragmas={"journal_mode": "wal"})
+    db = SqliteExtDatabase(args["cache"])
+    proxy.initialize(db)
 
     # TODO: Add force analize option
     # Analize dataset if cache does not exists
     if not has_cache:
-        records = [analize(annotation, image) for annotation, image in load_dataset(args["data_dir"])]
-        save_records(db, records)
+        # Create tables
+        db.create_tables([Annotation, Category, Image], safe=True)
+        # Load dataset
+        dataset = load_dataset(args["data_dir"])
+        # Save data
+        with db.atomic():
+            Category.insert_many(dataset.categories).execute()
+            Image.insert_many(dataset.images).execute()
+            Annotation.insert_many(dataset.annotations).execute()
 
     # Aggregation
     data = aggregate(db, filter)
@@ -58,25 +70,15 @@ def validate_args(
 
 
 def create_cache_path_from_data_dir(path: Path):
-    return Path("./hogehoge")
+    return Path("./hogehoge.sqlite3")
 
 
-def load_dataset(path: Path):
-    # TODO: Return data as generator
-    return []
-
-
-def analize(annotation: Dict, image: Path):
-    # TODO: Analize annotation and image
-    return {}
-
-
-def save_records(db: SqliteDatabase, records: List[Dict]):
+def save_records(db: SqliteExtDatabase, records: List[Dict]):
     # TODO: Save records to SQLite
     return True
 
 
-def aggregate(db: SqliteDatabase, filter: Dict):
+def aggregate(db: SqliteExtDatabase, filter: Dict):
     # TODO: Fetch data
     return []
 
