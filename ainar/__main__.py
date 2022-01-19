@@ -1,9 +1,9 @@
+import json
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
-from playhouse.sqlite_ext import SqliteExtDatabase
-import json
 import click
+from playhouse.sqlite_ext import SqliteExtDatabase
 
 from ainar.database import proxy
 from ainar.database.coco import Annotation, Category, Image
@@ -16,7 +16,7 @@ from ainar.filters import filter_dataset, parse_filter_string
 @click.option("--cache", type=Path, default=None, help="")
 @click.option("--filter", default=None, help="")
 @click.option("--output", default=None, help="")
-@click.option("--export", default=None, help="")
+@click.option("--export", type=Path, default=None, help="")
 def main(**args):
     args = validate_args(**args)
 
