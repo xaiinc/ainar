@@ -57,7 +57,7 @@ def validate_args(
     output: Optional[str],
     export: Optional[str],
 ):
-    if not data_dir.exists():
+    if not data_dir.is_dir():
         raise FileNotFoundError(f'Dataset "{data_dir}" does not exists')
 
     return {
