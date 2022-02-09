@@ -76,7 +76,8 @@ def store_dataset(db: SqliteExtDatabase, dataset: Coco):
         {
             **annotation,
             "area_ratio": (
-                annotation["area"] / images[annotation["image_id"]]["width"] * images[annotation["image_id"]]["height"]
+                annotation["area"]
+                / (images[annotation["image_id"]]["width"] * images[annotation["image_id"]]["height"])
             ),
         }
         for annotation in dataset.annotations
