@@ -13,6 +13,10 @@ class Image(BaseModel):
     coco_url = pw.CharField()
     date_captured = pw.DateTimeField()
 
+    @property
+    def area(self):
+        return self.width * self.hight
+
 
 class Category(BaseModel):
     name = pw.CharField()
@@ -26,3 +30,6 @@ class Annotation(BaseModel):
     segmentation = JSONField()
     area = pw.FloatField()
     iscrowd = pw.BooleanField()
+
+    # Extra annotatins
+    area_ratio = pw.FloatField()

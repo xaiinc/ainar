@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import Generator, List, Tuple, TypedDict, Union
 
 from pycocotools.coco import COCO
 from typing_extensions import TypedDict
@@ -126,26 +126,24 @@ class Coco:
         annotation_file: Path,
     ) -> None:
 
-        coco = COCO(str(annotation_file))
-        self.classes = CLASSES
-        self.annotations_list = list(coco.anns.values())
-        self.images_list = list(coco.imgs.values())
-        self.categories_list = list(coco.cats.values())
+        self._coco = COCO(str(annotation_file))
+        self._classes = CLASSES
+
+    @property
+    def classes(self):
+        return self._classes
 
     @property
     def categories(self) -> List[Category]:
-        return self.categories_list
+        return self._coco.cats.values()
 
     @property
     def images(self) -> List[Image]:
-        return self.images_list
+        return self._coco.imgs.values()
 
     @property
     def annotations(self) -> List[Annotation]:
-        return self.annotations_list
-
-    def __len__(self) -> int:
-        return len(self.images_list)
+        return self._coco.anns.values()
 
 
 def load_dataset(path: Path):
