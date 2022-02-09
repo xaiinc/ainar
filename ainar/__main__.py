@@ -1,4 +1,3 @@
-from email.mime import image
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 

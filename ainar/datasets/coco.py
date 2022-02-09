@@ -1,8 +1,7 @@
 from pathlib import Path
-from typing import Generator, List, Tuple, TypedDict, Union
+from typing import List, Tuple, TypedDict, Union
 
 from pycocotools.coco import COCO
-from typing_extensions import TypedDict
 
 CLASSES = [
     "person",
