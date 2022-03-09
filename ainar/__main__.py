@@ -36,7 +36,7 @@ def main(**args):
     [categories, images, annotations] = filter_dataset(args["filter"])
 
     # Aggregation
-    data = aggregate(annotations, args["filter"])
+    data = aggregate(categories, images, annotations, args["filter"])
 
     # Display results
     display_data(data, args["output"])
@@ -89,9 +89,27 @@ def store_dataset(db: SqliteExtDatabase, dataset: Coco):
         Annotation.insert_many(annotations).execute()
 
 
-def aggregate(annotations: Iterable[Annotation], filter: Dict):
-    # TODO: Fetch data
-    return []
+def aggregate(categories: Iterable[Category], images: Iterable[Image], annotations: Iterable[Annotation], filter: Dict):
+    return {
+        "per_class": { category.name: { } for category in categories },
+        "__total__": {
+            "num_classes": len(categories),
+            "images": len(images),
+            "box_sizes": {
+                "0-10": 0.0,
+                "10-20": 0.0,
+                "20-30": 0.0,
+                "30-40": 0.0,
+                "40-50": 0.0,
+                "50-60": 0.0,
+                "60-70": 0.0,
+                "70-80": 0.0,
+                "80-90": 0.0,
+                "90-100": 0.0,
+            },
+            "boxes_per_image": 0.0,
+        }
+    }
 
 
 def display_data(data: List[Dict], options: Dict):
