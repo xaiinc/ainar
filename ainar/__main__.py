@@ -91,7 +91,7 @@ def store_dataset(db: SqliteExtDatabase, dataset: Coco):
 
 def aggregate(categories: Iterable[Category], images: Iterable[Image], annotations: Iterable[Annotation], filter: Dict):
     return {
-        "per_class": { category.name: { } for category in categories },
+        "per_class": {category.name: {} for category in categories},
         "__total__": {
             "num_classes": len(categories),
             "images": len(images),
@@ -108,7 +108,7 @@ def aggregate(categories: Iterable[Category], images: Iterable[Image], annotatio
                 "90-100": 0.0,
             },
             "boxes_per_image": 0.0,
-        }
+        },
     }
 
 
