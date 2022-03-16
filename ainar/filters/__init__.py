@@ -26,11 +26,9 @@ def filter_dataset(conditions: Dict[str, Any]):
         images = images.group_by(Image.id)
         images = images.having(pw.fn.Count(annotations.c.id) > conditions["box_per_image"])
 
-    annotations = annotations.join(images, on=(images.c.id == Annotation.image_id))
+    category_list = []
+    for category in categories:
+        category.annotations = list(annotations.where(Annotation.category_id == category.id))
+        category_list.append(category)
 
-    # TODO: Prefetch relations
-    return (
-        Category.select().where(Category.id << [c.id for c in categories]),
-        Image.select().where(Image.id << [i.id for i in images]),
-        Annotation.select().where(Annotation.id << [a.id for a in annotations]),
-    )
+    return category_list
