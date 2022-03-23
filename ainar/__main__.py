@@ -91,8 +91,7 @@ def store_dataset(db: SqliteExtDatabase, dataset: Coco):
 
 
 def display_data(data: List[Dict], options: Dict):
-    # TODO: Display data
-    print(data)
+    print(json.dumps(data))
 
 
 def export(categories: Iterable[Category]):
