@@ -33,17 +33,17 @@ def main(**args):
         store_dataset(db, load_dataset(args["dataset_json"]))
 
     # Filtering
-    [categories, images, annotations] = filter_dataset(args["filter"])
+    categories = filter_dataset(args["filter"])
 
     # Aggregation
-    data = aggregate(categories, images, annotations, args["filter"])
+    data = aggregate(categories, args["filter"])
 
     # Display results
     display_data(data, args["output"])
 
     # Export to file
     if args["export"]:
-        export(categories, images, annotations)
+        export(categories)
 
 
 def validate_args(
@@ -89,12 +89,12 @@ def store_dataset(db: SqliteExtDatabase, dataset: Coco):
         Annotation.insert_many(annotations).execute()
 
 
-def aggregate(categories: Iterable[Category], images: Iterable[Image], annotations: Iterable[Annotation], filter: Dict):
+def aggregate(categories: List[Category], filter: Dict):
     return {
         "per_class": {category.name: {} for category in categories},
         "__total__": {
             "num_classes": len(categories),
-            "images": len(images),
+            "images": 0,
             "box_sizes": {
                 "0-10": 0.0,
                 "10-20": 0.0,
@@ -117,11 +117,7 @@ def display_data(data: List[Dict], options: Dict):
     print(data)
 
 
-def export(
-    categories: List[Category],
-    images: List[Image],
-    annotations: List[Annotation],
-):
+def export(categories: Iterable[Category]):
     # TODO: Export data
     pass
 
