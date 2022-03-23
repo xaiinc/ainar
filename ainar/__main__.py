@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from playhouse.sqlite_ext import SqliteExtDatabase
 import json
@@ -88,29 +88,6 @@ def store_dataset(db: SqliteExtDatabase, dataset: Coco):
         Category.insert_many(dataset.categories).execute()
         Image.insert_many(dataset.images).execute()
         Annotation.insert_many(annotations).execute()
-
-
-def aggregate(categories: List[Category], filter: Dict):
-    return {
-        "per_class": {category.name: {} for category in categories},
-        "__total__": {
-            "num_classes": len(categories),
-            "images": 0,
-            "box_sizes": {
-                "0-10": 0.0,
-                "10-20": 0.0,
-                "20-30": 0.0,
-                "30-40": 0.0,
-                "40-50": 0.0,
-                "50-60": 0.0,
-                "60-70": 0.0,
-                "70-80": 0.0,
-                "80-90": 0.0,
-                "90-100": 0.0,
-            },
-            "boxes_per_image": 0.0,
-        },
-    }
 
 
 def display_data(data: List[Dict], options: Dict):

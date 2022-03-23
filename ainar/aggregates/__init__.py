@@ -4,7 +4,7 @@ from peewee import ModelSelect
 
 
 def aggregate(categories: ModelSelect, filter: Dict) -> Dict[str, dict]:
-    data_per_category = [_gather_category_data(category) for category in categories.prefetch(Annotation, Image)]
+    data_per_category = [_gather_category_data(category) for category in categories]
 
     # Extract images from categories -> flatten -> unique
     images = list(set(sum([images for _, _, images in data_per_category], [])))
@@ -17,15 +17,16 @@ def aggregate(categories: ModelSelect, filter: Dict) -> Dict[str, dict]:
                 "images": len(images),
                 "boxes": len(boxes),
                 "boxes_per_size": _sort_boxes_per_size(boxes),
-                "boxes_per_image": len(boxes) / len(images),
+                "boxes_per_image": len(boxes) / max(len(images), 1),
             }
             for name, boxes, images in data_per_category
         },
-        "__total__": {
+        "total": {
             "num_classes": len(categories),
             "images": len(images),
+            "boxes": len(annotations),
             "boxes_per_size": _sort_boxes_per_size(annotations),
-            "boxes_per_image": len(annotations) / len(images),
+            "boxes_per_image": len(annotations) / max(len(images), 1),
         },
     }
 
